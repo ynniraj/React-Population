@@ -11,6 +11,8 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import axios from "axios";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteId } from "../Redux/action";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -33,12 +35,18 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function ShowTable({ tableData, setData }) {
+  useSelector((store) => store.delete.data);
+  const dispatch = useDispatch();
+
   const handleDelete = (id) => {
     axios
       .delete(`http://localhost:8080/add-city/${id}`)
       .then((response) => {
         console.log(response);
         getCityData();
+        localStorage.setItem("data", JSON.stringify(response.data));
+        const localStorageToken = localStorage.getItem("data");
+        dispatch(deleteId(localStorageToken));
       })
       .catch((err) => {
         console.log(err);
@@ -70,6 +78,9 @@ export default function ShowTable({ tableData, setData }) {
       setOrder("ASC");
     }
   };
+
+  const localStorageToken = localStorage.getItem("data");
+  dispatch(deleteId(localStorageToken));
 
   return (
     <>
