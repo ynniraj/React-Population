@@ -10,6 +10,7 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import axios from "axios";
+import { useState } from "react";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -56,8 +57,29 @@ export default function ShowTable({ tableData, setData }) {
       });
   };
 
+  const [order, setOrder] = useState("ASC");
+  const handlesort = (col) => {
+    if (order === "ASC") {
+      const sorted = [...tableData].sort((a, b) => (a[col] > b[col] ? 1 : -1));
+      setData(sorted);
+      setOrder("DESC");
+    }
+    if (order === "DESC") {
+      const sorted = [...tableData].sort((a, b) => (a[col] < b[col] ? 1 : -1));
+      setData(sorted);
+      setOrder("ASC");
+    }
+  };
+
   return (
     <>
+      <Button
+        variant="contained"
+        sx={{ m: 3 }}
+        onClick={() => handlesort("ASC")}
+      >
+        Sort Population
+      </Button>
       <Container component="main" maxWidth="m">
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
