@@ -40,7 +40,7 @@ export default function ShowTable({ tableData, setData }) {
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:8080/add-city/${id}`)
+      .delete(`https://reactpopulation.herokuapp.com/add-city/${id}`)
       .then((response) => {
         console.log(response);
         getCityData();
@@ -55,7 +55,7 @@ export default function ShowTable({ tableData, setData }) {
 
   const getCityData = () => {
     axios
-      .get("http://localhost:8080/add-city")
+      .get("https://reactpopulation.herokuapp.com/add-city")
       .then((response) => {
         console.log(response.data);
         setData([...response.data]);
