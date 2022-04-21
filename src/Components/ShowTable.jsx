@@ -11,8 +11,8 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import axios from "axios";
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { deleteId } from "../Redux/action";
+import Modal from "@mui/material/Modal";
+import { Box, TextField } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -35,8 +35,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function ShowTable({ tableData, setData }) {
-  useSelector((store) => store.delete.data);
-  const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
 
   const handleDelete = (id) => {
     axios
@@ -44,9 +43,6 @@ export default function ShowTable({ tableData, setData }) {
       .then((response) => {
         console.log(response);
         getCityData();
-        localStorage.setItem("data", JSON.stringify(response.data));
-        const localStorageToken = localStorage.getItem("data");
-        dispatch(deleteId(localStorageToken));
       })
       .catch((err) => {
         console.log(err);
@@ -79,8 +75,31 @@ export default function ShowTable({ tableData, setData }) {
     }
   };
 
-  const localStorageToken = localStorage.getItem("data");
-  dispatch(deleteId(localStorageToken));
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [pop, setPop] = useState("");
+
+  const handleUpdateChanges = (id) => {
+    console.log(city);
+    console.log(country);
+    console.log(pop);
+    const payload = {
+      city: city || tableData[id].city,
+      population: pop || tableData[id].population,
+      country: country || tableData[id].country,
+    };
+    axios
+      .patch(`https://reactpopulation.herokuapp.com/add-city/${id}`, payload)
+      .then((response) => {
+        console.log(response);
+        getCityData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    console.log(id);
+    console.log(payload);
+  };
 
   return (
     <>
@@ -116,7 +135,14 @@ export default function ShowTable({ tableData, setData }) {
                     {el.population}
                   </StyledTableCell>
                   <StyledTableCell align="right">
-                    {<Button variant="contained">Edit</Button>}
+                    {
+                      <Button
+                        variant="contained"
+                        onClick={(e) => setOpen(true)}
+                      >
+                        Edit
+                      </Button>
+                    }
                   </StyledTableCell>
                   <StyledTableCell align="right">
                     {
@@ -128,6 +154,68 @@ export default function ShowTable({ tableData, setData }) {
                       </Button>
                     }
                   </StyledTableCell>
+                  <Modal
+                    open={open}
+                    onClose={(e) => setOpen(false)}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: "400px",
+                        height: "400px",
+                        backgroundColor: "white",
+                        borderRadius: "10px",
+                      }}
+                    >
+                      <Box noValidate sx={{ mt: 1, padding: "30px" }}>
+                        <TextField
+                          margin="normal"
+                          required
+                          fullWidth
+                          id="country"
+                          label="Update Country"
+                          name="country"
+                          onChange={(e) => setCountry(e.target.value)}
+                          autoFocus
+                        />
+                        <TextField
+                          margin="normal"
+                          required
+                          fullWidth
+                          onChange={(e) => setCity(e.target.value)}
+                          id="city"
+                          label="Update City"
+                          name="city"
+                          autoFocus
+                        />
+                        <TextField
+                          margin="normal"
+                          required
+                          fullWidth
+                          id="population"
+                          onChange={(e) => setPop(e.target.value)}
+                          label="Update Population"
+                          name="population"
+                          autoFocus
+                        />
+
+                        <Button
+                          onClick={() => handleUpdateChanges(el.id)}
+                          fullWidth
+                          variant="contained"
+                          sx={{ mt: 3, mb: 2 }}
+                        >
+                          Update Changes
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Modal>
                 </StyledTableRow>
               ))}
             </TableBody>

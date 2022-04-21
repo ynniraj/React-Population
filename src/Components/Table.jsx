@@ -6,15 +6,10 @@ import Container from "@mui/material/Container";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ShowTable from "./ShowTable";
-import { useSelector, useDispatch } from "react-redux";
-import { deleteId } from "../Redux/action";
 
 const Table = () => {
-  useSelector((store) => store.delete.data);
-  const dispatch = useDispatch();
 
-  const localStorageToken = localStorage.getItem("data");
-  dispatch(deleteId(localStorageToken));
+
 
   const [data, setData] = useState([]);
 
