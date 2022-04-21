@@ -8,9 +8,6 @@ import { useEffect, useState } from "react";
 import ShowTable from "./ShowTable";
 
 const Table = () => {
-
-
-
   const [data, setData] = useState([]);
 
   const handleSubmitCountry = (event) => {
@@ -37,7 +34,7 @@ const Table = () => {
     };
 
     axios
-      .post("https://reactpopulation.herokuapp.com/add-city", payload)
+      .post("http://localhost:8080/add-city", payload)
       .then((response) => {
         console.log(response);
         getCityData();
@@ -49,7 +46,7 @@ const Table = () => {
 
   const getCityData = () => {
     axios
-      .get("https://reactpopulation.herokuapp.com/add-city")
+      .get("http://localhost:8080/add-city")
       .then((response) => {
         console.log(response.data);
         setData([...response.data]);

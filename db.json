@@ -7,10 +7,40 @@
   ],
   "add-city": [
     {
-      "city": "Jaipur",
-      "population": "21000",
-      "country": "India",
+      "city": "Mosco",
+      "population": "515151",
+      "country": "Russia",
       "id": 3
+    },
+    {
+      "city": "PITHAMPUR",
+      "population": "12000",
+      "country": "India",
+      "id": 4
+    },
+    {
+      "city": "PITHAMPUR",
+      "population": "540000",
+      "country": "India",
+      "id": 5
+    },
+    {
+      "city": "PITHAMPUR",
+      "population": "10000",
+      "country": "India",
+      "id": 6
+    },
+    {
+      "city": "PITHAMPUR",
+      "population": "10000",
+      "country": "India",
+      "id": 7
+    },
+    {
+      "city": "Manchester",
+      "population": "616161",
+      "country": "London",
+      "id": 8
     }
   ]
 }

@@ -39,7 +39,7 @@ export default function ShowTable({ tableData, setData }) {
 
   const handleDelete = (id) => {
     axios
-      .delete(`https://reactpopulation.herokuapp.com/add-city/${id}`)
+      .delete(`http://localhost:8080/add-city/${id}`)
       .then((response) => {
         console.log(response);
         getCityData();
@@ -51,7 +51,7 @@ export default function ShowTable({ tableData, setData }) {
 
   const getCityData = () => {
     axios
-      .get("https://reactpopulation.herokuapp.com/add-city")
+      .get("http://localhost:8080/add-city")
       .then((response) => {
         console.log(response.data);
         setData([...response.data]);
@@ -61,35 +61,42 @@ export default function ShowTable({ tableData, setData }) {
       });
   };
 
-  const [order, setOrder] = useState("ASC");
-  const handlesort = (col) => {
-    if (order === "ASC") {
-      const sorted = [...tableData].sort((a, b) => (a[col] > b[col] ? 1 : -1));
-      setData(sorted);
-      setOrder("DESC");
-    }
-    if (order === "DESC") {
-      const sorted = [...tableData].sort((a, b) => (a[col] < b[col] ? 1 : -1));
-      setData(sorted);
-      setOrder("ASC");
-    }
+  const handleSortAsc = () => {
+    axios
+      .get("http://localhost:8080/add-city?_sort=population")
+      .then((response) => {
+        console.log(response);
+        setData([...response.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const handleSortDesc = () => {
+    axios
+      .get("http://localhost:8080/add-city?_sort=population&_order=desc")
+      .then((response) => {
+        console.log(response);
+        setData([...response.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [pop, setPop] = useState("");
+  const [ids, setId] = useState("");
 
-  const handleUpdateChanges = (id) => {
-    console.log(city);
-    console.log(country);
-    console.log(pop);
+  const handleUpdateChanges = () => {
     const payload = {
-      city: city || tableData[id].city,
-      population: pop || tableData[id].population,
-      country: country || tableData[id].country,
+      city: city || tableData[ids].city,
+      population: pop || tableData[ids].population,
+      country: country || tableData[ids].country,
     };
     axios
-      .patch(`https://reactpopulation.herokuapp.com/add-city/${id}`, payload)
+      .patch(`http://localhost:8080/add-city/${ids}`, payload)
       .then((response) => {
         console.log(response);
         getCityData();
@@ -97,19 +104,55 @@ export default function ShowTable({ tableData, setData }) {
       .catch((err) => {
         console.log(err);
       });
-    console.log(id);
+    console.log(ids);
     console.log(payload);
+  };
+
+  const [countryFilter, setCountryFilter] = useState("");
+
+  const handleCountryFilters = () => {
+    axios
+      .get(`http://localhost:8080/add-city?country=${countryFilter}`)
+      .then((response) => {
+        console.log(response);
+        setData([...response.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
     <>
-      <Button
-        variant="contained"
-        sx={{ m: 3 }}
-        onClick={() => handlesort("ASC")}
-      >
-        Sort Population
+      <Button variant="contained" sx={{ m: 3 }} onClick={handleSortAsc}>
+        Sort Population By Asc
       </Button>
+      <Button variant="contained" sx={{ m: 3 }} onClick={handleSortDesc}>
+        Sort Population By Desc
+      </Button>
+
+      <Box sx={{ width: "30%" }}>
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="population"
+          onChange={(e) => setCountryFilter(e.target.value)}
+          label="Seach By Country"
+          name="population"
+          autoFocus
+        />
+
+        <Button
+          onClick={handleCountryFilters}
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+        >
+          Search Country
+        </Button>
+      </Box>
+
       <Container component="main" maxWidth="m">
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -138,11 +181,73 @@ export default function ShowTable({ tableData, setData }) {
                     {
                       <Button
                         variant="contained"
-                        onClick={(e) => setOpen(true)}
+                        onClick={(e) => setOpen(true) || setId(el.id)}
                       >
                         Edit
                       </Button>
                     }
+                    <Modal
+                      open={open}
+                      onClose={(e) => setOpen(false)}
+                      aria-labelledby="modal-modal-title"
+                      aria-describedby="modal-modal-description"
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: "400px",
+                          height: "400px",
+                          backgroundColor: "white",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <Box noValidate sx={{ mt: 1, padding: "30px" }}>
+                          <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="country"
+                            label="Update Country"
+                            name="country"
+                            onChange={(e) => setCountry(e.target.value)}
+                            autoFocus
+                          />
+                          <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            onChange={(e) => setCity(e.target.value)}
+                            id="city"
+                            label="Update City"
+                            name="city"
+                            autoFocus
+                          />
+                          <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="population"
+                            onChange={(e) => setPop(e.target.value)}
+                            label="Update Population"
+                            name="population"
+                            autoFocus
+                          />
+
+                          <Button
+                            onClick={handleUpdateChanges}
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                          >
+                            Update Changes
+                          </Button>
+                        </Box>
+                      </Box>
+                    </Modal>
                   </StyledTableCell>
                   <StyledTableCell align="right">
                     {
@@ -154,68 +259,6 @@ export default function ShowTable({ tableData, setData }) {
                       </Button>
                     }
                   </StyledTableCell>
-                  <Modal
-                    open={open}
-                    onClose={(e) => setOpen(false)}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        width: "400px",
-                        height: "400px",
-                        backgroundColor: "white",
-                        borderRadius: "10px",
-                      }}
-                    >
-                      <Box noValidate sx={{ mt: 1, padding: "30px" }}>
-                        <TextField
-                          margin="normal"
-                          required
-                          fullWidth
-                          id="country"
-                          label="Update Country"
-                          name="country"
-                          onChange={(e) => setCountry(e.target.value)}
-                          autoFocus
-                        />
-                        <TextField
-                          margin="normal"
-                          required
-                          fullWidth
-                          onChange={(e) => setCity(e.target.value)}
-                          id="city"
-                          label="Update City"
-                          name="city"
-                          autoFocus
-                        />
-                        <TextField
-                          margin="normal"
-                          required
-                          fullWidth
-                          id="population"
-                          onChange={(e) => setPop(e.target.value)}
-                          label="Update Population"
-                          name="population"
-                          autoFocus
-                        />
-
-                        <Button
-                          onClick={() => handleUpdateChanges(el.id)}
-                          fullWidth
-                          variant="contained"
-                          sx={{ mt: 3, mb: 2 }}
-                        >
-                          Update Changes
-                        </Button>
-                      </Box>
-                    </Box>
-                  </Modal>
                 </StyledTableRow>
               ))}
             </TableBody>
