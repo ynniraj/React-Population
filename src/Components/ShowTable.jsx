@@ -39,7 +39,7 @@ export default function ShowTable({ tableData, setData }) {
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:8080/add-city/${id}`)
+      .delete(`https://reactpopulation.herokuapp.com/add-city/${id}`)
       .then((response) => {
         console.log(response);
         getCityData();
@@ -51,7 +51,7 @@ export default function ShowTable({ tableData, setData }) {
 
   const getCityData = () => {
     axios
-      .get("http://localhost:8080/add-city")
+      .get("https://reactpopulation.herokuapp.com/add-city")
       .then((response) => {
         console.log(response.data);
         setData([...response.data]);
@@ -63,7 +63,7 @@ export default function ShowTable({ tableData, setData }) {
 
   const handleSortAsc = () => {
     axios
-      .get("http://localhost:8080/add-city?_sort=population")
+      .get("https://reactpopulation.herokuapp.com/add-city?_sort=population")
       .then((response) => {
         console.log(response);
         setData([...response.data]);
@@ -74,7 +74,9 @@ export default function ShowTable({ tableData, setData }) {
   };
   const handleSortDesc = () => {
     axios
-      .get("http://localhost:8080/add-city?_sort=population&_order=desc")
+      .get(
+        "https://reactpopulation.herokuapp.com/add-city?_sort=population&_order=desc"
+      )
       .then((response) => {
         console.log(response);
         setData([...response.data]);
@@ -96,7 +98,7 @@ export default function ShowTable({ tableData, setData }) {
       country: country || tableData[ids].country,
     };
     axios
-      .patch(`http://localhost:8080/add-city/${ids}`, payload)
+      .patch(`https://reactpopulation.herokuapp.com/add-city/${ids}`, payload)
       .then((response) => {
         console.log(response);
         getCityData();
@@ -112,7 +114,9 @@ export default function ShowTable({ tableData, setData }) {
 
   const handleCountryFilters = () => {
     axios
-      .get(`http://localhost:8080/add-city?country=${countryFilter}`)
+      .get(
+        `https://reactpopulation.herokuapp.com/add-city?country=${countryFilter}`
+      )
       .then((response) => {
         console.log(response);
         setData([...response.data]);
@@ -124,33 +128,43 @@ export default function ShowTable({ tableData, setData }) {
 
   return (
     <>
-      <Button variant="contained" sx={{ m: 3 }} onClick={handleSortAsc}>
-        Sort Population By Asc
-      </Button>
-      <Button variant="contained" sx={{ m: 3 }} onClick={handleSortDesc}>
-        Sort Population By Desc
-      </Button>
-
-      <Box sx={{ width: "30%" }}>
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="population"
-          onChange={(e) => setCountryFilter(e.target.value)}
-          label="Seach By Country"
-          name="population"
-          autoFocus
-        />
-
+      <Box sx={{ display: "flex", justifyContent: "space-around" }}>
         <Button
-          onClick={handleCountryFilters}
-          fullWidth
           variant="contained"
-          sx={{ mt: 3, mb: 2 }}
+          sx={{ m: 3, height: "50%" }}
+          onClick={handleSortAsc}
         >
-          Search Country
+          Sort Population By Asc
         </Button>
+        <Button
+          variant="contained"
+          sx={{ m: 3, height: "50%" }}
+          onClick={handleSortDesc}
+        >
+          Sort Population By Desc
+        </Button>
+
+        <Box sx={{ width: "20%" }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="population"
+            onChange={(e) => setCountryFilter(e.target.value)}
+            label="Seach By Country"
+            name="population"
+            autoFocus
+          />
+
+          <Button
+            onClick={handleCountryFilters}
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Search Country
+          </Button>
+        </Box>
       </Box>
 
       <Container component="main" maxWidth="m">

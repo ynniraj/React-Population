@@ -34,7 +34,7 @@ const Table = () => {
     };
 
     axios
-      .post("http://localhost:8080/add-city", payload)
+      .post("https://reactpopulation.herokuapp.com/add-city", payload)
       .then((response) => {
         console.log(response);
         getCityData();
@@ -46,7 +46,7 @@ const Table = () => {
 
   const getCityData = () => {
     axios
-      .get("http://localhost:8080/add-city")
+      .get("https://reactpopulation.herokuapp.com/add-city")
       .then((response) => {
         console.log(response.data);
         setData([...response.data]);
