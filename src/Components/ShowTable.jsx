@@ -10,9 +10,11 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "@mui/material/Modal";
 import { Box, TextField } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { selectProducts } from "../Redux/DataApi/action";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,7 +36,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function ShowTable({ tableData, setData }) {
+export default function ShowTable() {
+  const dispatch = useDispatch();
+  const getTableData = useSelector(
+    (store) => store.getDataReducer.selectedProduct
+  );
+  useEffect(() => {
+    getCityData();
+  }, []);
   const [open, setOpen] = useState(false);
 
   const handleDelete = (id) => {
@@ -54,7 +63,9 @@ export default function ShowTable({ tableData, setData }) {
       .get("https://reactpopulation.herokuapp.com/add-city")
       .then((response) => {
         console.log(response.data);
-        setData([...response.data]);
+        dispatch(selectProducts([...response.data]));
+
+        // setData([...response.data]);
       })
       .catch((err) => {
         console.log(err);
@@ -66,7 +77,7 @@ export default function ShowTable({ tableData, setData }) {
       .get("https://reactpopulation.herokuapp.com/add-city?_sort=population")
       .then((response) => {
         console.log(response);
-        setData([...response.data]);
+        dispatch(selectProducts([...response.data]));
       })
       .catch((err) => {
         console.log(err);
@@ -79,7 +90,7 @@ export default function ShowTable({ tableData, setData }) {
       )
       .then((response) => {
         console.log(response);
-        setData([...response.data]);
+        dispatch(selectProducts([...response.data]));
       })
       .catch((err) => {
         console.log(err);
@@ -90,12 +101,11 @@ export default function ShowTable({ tableData, setData }) {
   const [country, setCountry] = useState("");
   const [pop, setPop] = useState("");
   const [ids, setId] = useState("");
-
   const handleUpdateChanges = () => {
     const payload = {
-      city: city || tableData[ids].city,
-      population: pop || tableData[ids].population,
-      country: country || tableData[ids].country,
+      city: city,
+      population: pop,
+      country: country,
     };
     axios
       .patch(`https://reactpopulation.herokuapp.com/add-city/${ids}`, payload)
@@ -119,7 +129,7 @@ export default function ShowTable({ tableData, setData }) {
       )
       .then((response) => {
         console.log(response);
-        setData([...response.data]);
+        dispatch(selectProducts([...response.data]));
       })
       .catch((err) => {
         console.log(err);
@@ -181,7 +191,7 @@ export default function ShowTable({ tableData, setData }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {tableData.map((el) => (
+              {getTableData.map((el) => (
                 <StyledTableRow key={el.id}>
                   <StyledTableCell component="th" scope="el">
                     {el.id}

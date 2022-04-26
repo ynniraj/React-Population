@@ -4,11 +4,12 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import axios from "axios";
-import { useEffect, useState } from "react";
 import ShowTable from "./ShowTable";
+import { useDispatch } from "react-redux";
+import { selectProducts } from "../Redux/DataApi/action";
 
 const Table = () => {
-  const [data, setData] = useState([]);
+  const dispatch = useDispatch();
 
   const handleSubmitCountry = (event) => {
     event.preventDefault();
@@ -49,16 +50,12 @@ const Table = () => {
       .get("https://reactpopulation.herokuapp.com/add-city")
       .then((response) => {
         console.log(response.data);
-        setData([...response.data]);
+        dispatch(selectProducts([...response.data]));
       })
       .catch((err) => {
         console.log(err);
       });
   };
-
-  useEffect(() => {
-    getCityData();
-  }, []);
 
   return (
     <>
@@ -140,7 +137,7 @@ const Table = () => {
         </Container>
       </Box>
 
-      <ShowTable tableData={data} setData={setData} />
+      <ShowTable />
     </>
   );
 };
