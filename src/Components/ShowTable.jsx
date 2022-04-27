@@ -44,6 +44,7 @@ export default function ShowTable() {
   useEffect(() => {
     getCityData();
   }, []);
+
   const [open, setOpen] = useState(false);
 
   const handleDelete = (id) => {
@@ -64,8 +65,6 @@ export default function ShowTable() {
       .then((response) => {
         console.log(response.data);
         dispatch(selectProducts([...response.data]));
-
-        // setData([...response.data]);
       })
       .catch((err) => {
         console.log(err);
